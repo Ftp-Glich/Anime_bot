@@ -78,7 +78,7 @@ def show_res(results, call):
     if len(results) == 0 or len(results) <= 21:
         bot.send_message(chat_id=call.message.chat.id,
                          text="Мы вывели все результаты")
-        call.data = "Давай попробуем"
+        call.data = platform[0]
         call_back(call)
         return 0
 
@@ -111,9 +111,6 @@ def call_back(call):
     if call.data == "Давай попробуем":
         if is_first_usage[0]:
             ask_platform(call)
-
-        clear_list(search_list)
-
     elif call.data == "Очистить":
         for o in range(len(search_list) - 1):
             clear_list(search_list)
@@ -121,6 +118,8 @@ def call_back(call):
         mess[0] = bot.edit_message_text(chat_id=mess[0].chat.id, message_id=mess[0].message_id,
                                         text=mes)
     elif call.data == "mobile":
+        platform[0] = call.data
+        clear_list(search_list)
         keyboard = []
         for o in range(8):
             for h in buttons_types[o]:
@@ -129,6 +128,8 @@ def call_back(call):
         bot.send_message(call.message.chat.id, "Выберите жанры: ", reply_markup=murkup)
         mess.append(bot.send_message(call.message.chat.id, mes))
     elif call.data == "desktop":
+        platform[0] = call.data
+        clear_list(search_list)
         keyboard = []
         for o in range(8):
             keyboard.append(buttons_types[o])
@@ -140,7 +141,7 @@ def call_back(call):
         show_res(results1[0], call)
     elif call.data == "again":
         clear_list(results1[0])
-        call.data = "Давай попробуем"
+        call.data = platform[0]
         call_back(call)
 
     elif call.data != "Поиск":
