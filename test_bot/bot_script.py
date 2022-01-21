@@ -18,11 +18,10 @@ def clear_list(arr):
 def append_to_list(el, search_list):
     for element in search_list:
         if el == element:
-            return False
-    search_list.append(el)
+            return True
 
 
-bot = telebot.TeleBot("1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q")
+bot = telebot.TeleBot("5206087809:AAGzWSS3LQ48A9iS-lyYED_4_wSurX6l4aA")
 
 genres = [
  ["Экшен", "Боевые искусства", "Вампиры", "Война", "Гарем", "Гарем для девушек"],
@@ -103,16 +102,12 @@ def ask_platform(call):
 def call_back(call):
     mes = "Вы пока ничего не выбрали"
     if call.data == "Давай попробуем":
-        print("1")
         platform = users_base.get_platform(call.from_user.id)
-        print("1")
         if platform == 0:
             ask_platform(call)
         else:
-            print("2")
             users_base.clear_search_list(call.from_user.id)
             keyboard = []
-            print("3")
             if platform == "mobile":
                 for o in range(8):
                     for h in buttons_types[o]:
@@ -120,17 +115,11 @@ def call_back(call):
             else:
                 for o in range(8):
                     keyboard.append(buttons_types[o])
-            print("4")
             murkup = types.InlineKeyboardMarkup(keyboard)
-            print("5")
             bot.send_message(call.message.chat.id, "Выберите жанры: ", reply_markup=murkup)
-            print("6")
             temp = bot.send_message(call.message.chat.id, mes)
-            print("7")
             users_base.set_message_id(call.from_user.id, temp.id)
-            print("8")
             users_base.set_chat_id(call.from_user.id, call.message.chat.id)
-            print("9")
 
     elif call.data == "mobile" or call.data == "desktop":
         users_base.add_user(call.from_user.id, call.data)
@@ -164,22 +153,14 @@ def call_back(call):
         call_back(call)
 
     elif call.data != "Поиск":
-        temp = False
-        for t in range(7):
-            for u in range(6):
-                if call.data == genres[t][u]:
-                    temp = True
-                    break
-        if not temp:
-            bot.delete_message(call.message.chat.id, call.chat.message_id)
         if not append_to_list(call.data, users_base.get_search_list(call.from_user.id)):
             users_base.append_to_search_list(call.from_user.id, call.data)
-        mes = ""
-        for p in users_base.get_search_list(call.from_user.id):
-            mes += p + " "
-        bot.edit_message_text(chat_id=users_base.get_chat_id(call.from_user.id),
-                              message_id=users_base.get_message_id(call.from_user.id),
-                              text="Вы выбрали:" + mes)
+            mes = ""
+            for p in users_base.get_search_list(call.from_user.id):
+                mes += p + " "
+            bot.edit_message_text(chat_id=users_base.get_chat_id(call.from_user.id),
+                                  message_id=users_base.get_message_id(call.from_user.id),
+                                  text="Вы выбрали:" + mes)
     elif call.data == "Поиск":
         users_base.set_results(call.from_user.id, searcher.get_res(users_base.get_search_list(call.from_user.id)))
         show_res(users_base.get_results(call.from_user.id), call)
