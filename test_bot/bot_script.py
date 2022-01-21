@@ -21,7 +21,7 @@ def append_to_list(el, search_list):
             return True
 
 
-bot = telebot.TeleBot("5206087809:AAGzWSS3LQ48A9iS-lyYED_4_wSurX6l4aA")
+bot = telebot.TeleBot("1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q")
 
 genres = [
  ["Экшен", "Боевые искусства", "Вампиры", "Война", "Гарем", "Гарем для девушек"],
