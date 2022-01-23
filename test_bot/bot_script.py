@@ -21,6 +21,8 @@ def append_to_list(el, search_list):
             return True
 
 
+# 5206087809:AAGzWSS3LQ48A9iS-lyYED_4_wSurX6l4aA - test_bot_token
+
 bot = telebot.TeleBot("1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q")
 
 genres = [
@@ -102,6 +104,7 @@ def ask_platform(call):
 def call_back(call):
     mes = "Вы пока ничего не выбрали"
     if call.data == "Давай попробуем":
+        bot.answer_callback_query(call.id)
         platform = users_base.get_platform(call.from_user.id)
         if platform == 0:
             ask_platform(call)
@@ -122,6 +125,7 @@ def call_back(call):
             users_base.set_chat_id(call.from_user.id, call.message.chat.id)
 
     elif call.data == "mobile" or call.data == "desktop":
+        bot.answer_callback_query(call.id)
         users_base.add_user(call.from_user.id, call.data)
         users_base.clear_search_list(call.from_user.id)
         platform = call.data
@@ -140,19 +144,23 @@ def call_back(call):
         users_base.set_message_id(call.from_user.id, call.message.message_id)
         users_base.set_chat_id(call.from_user.id, call.message.chat.id)
     elif call.data == "Очистить":
+        bot.answer_callback_query(call.id)
         users_base.clear_search_list(call.from_user.id)
         mes = "Вы пока ничего не выбрали"
         bot.edit_message_text(chat_id=users_base.get_chat_id(call.from_user.id),
                               message_id=users_base.get_message_id(call.from_user.id), text=mes)
     elif call.data == "more":
+        bot.answer_callback_query(call.id)
         users_base.set_results(call.from_user.id, reindex_res(users_base.get_results(call.from_user.id)))
         show_res(users_base.get_results(call.from_user.id), call)
     elif call.data == "again":
+        bot.answer_callback_query(call.id)
         users_base.clear_results(call.from_user.id)
         call.data = "Давай попробуем"
         call_back(call)
 
     elif call.data != "Поиск":
+        bot.answer_callback_query(call.id)
         if not append_to_list(call.data, users_base.get_search_list(call.from_user.id)):
             users_base.append_to_search_list(call.from_user.id, call.data)
             mes = ""
@@ -162,6 +170,7 @@ def call_back(call):
                                   message_id=users_base.get_message_id(call.from_user.id),
                                   text="Вы выбрали:" + mes)
     elif call.data == "Поиск":
+        bot.answer_callback_query(call.id)
         users_base.set_results(call.from_user.id, searcher.get_res(users_base.get_search_list(call.from_user.id)))
         show_res(users_base.get_results(call.from_user.id), call)
 
