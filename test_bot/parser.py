@@ -1,7 +1,13 @@
 from requests import *
+import base_updater
+
+updater = base_updater.Updater()
 
 from bs4 import BeautifulSoup
 
+import dict
+
+dictonary = dict.Dictionary()
 
 HEADERS = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
 Chrome/92.0.4515.159 Safari/537.36', 'accept': '*/*', "connection": "keep-alive"}
@@ -64,7 +70,7 @@ def get_genres(href):
     items = soup.find_all('div', class_='fi-col-item')
     for item in items:
         row_name = item.find('div', class_='sfull-t').text
-        if row_name == "Жанр":
+        if row_name == "Ð–Ð°Ð½Ñ€":
             for genre in item.find_all('a'):
                 genres.append(genre.text)
     return genres
@@ -83,7 +89,8 @@ def parse():
                 'genres' + str(i): get_genres(href)
             })
             i += 1
-    return animes
+    dictonary.animes = animes
+    updater.update(dictonary.animes)
 
 
-print(parse())
+parse()
