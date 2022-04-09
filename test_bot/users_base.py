@@ -8,7 +8,7 @@ class UserBase:
     def __init__(self):
         self.db_client = pymongo.MongoClient("mongodb://localhost:27017")
         self.current_db = self.db_client["pylougedb"]
-        self.collection = self.current_db["users_db"]
+        self.collection = self.current_db["users4_db"]
 
     def add_user(self, user_id, platform):
         temp = {
@@ -19,7 +19,13 @@ class UserBase:
                 "chat_id": int(),
                 "results": []
                 }
-        self.collection.insert(temp)
+        self.collection.insert_one(temp)
+
+    def set_platform(self, user_id, platform):
+        res = self.collection.find_one({"user_id": user_id})
+        res["platform"] = platform
+        self.collection.delete_one({"user_id": user_id})
+        self.collection.insert_one(res)
 
     def get_platform(self, user_id):
         res = self.collection.find_one({"user_id": user_id})
@@ -35,13 +41,13 @@ class UserBase:
         res = self.collection.find_one({"user_id": user_id})
         res["search_list"].append(element)
         self.collection.delete_one({"user_id": user_id})
-        self.collection.insert(res)
+        self.collection.insert_one(res)
 
     def clear_search_list(self, user_id):
         res = self.collection.find_one({"user_id": user_id})
         res["search_list"] = []
         self.collection.delete_one({"user_id": user_id})
-        self.collection.insert(res)
+        self.collection.insert_one(res)
 
     def get_message_id(self, user_id):
         res = self.collection.find_one({"user_id": user_id})
@@ -51,19 +57,19 @@ class UserBase:
         res = self.collection.find_one({"user_id": user_id})
         res["message_id"] = message_id
         self.collection.delete_one({"user_id": user_id})
-        self.collection.insert(res)
+        self.collection.insert_one(res)
 
     def set_results(self, user_id, results):
         res = self.collection.find_one({"user_id": user_id})
         res["results"] = results
         self.collection.delete_one({"user_id": user_id})
-        self.collection.insert(res)
+        self.collection.insert_one(res)
 
     def clear_results(self, user_id):
         res = self.collection.find_one({"user_id": user_id})
         res["results"].clear()
         self.collection.delete_one({"user_id": user_id})
-        self.collection.insert(res)
+        self.collection.insert_one(res)
 
     def get_results(self, user_id):
         res = self.collection.find_one({"user_id": user_id})
@@ -73,7 +79,7 @@ class UserBase:
         res = self.collection.find_one({"user_id": user_id})
         res["chat_id"] = chat_id
         self.collection.delete_one({"user_id": user_id})
-        self.collection.insert(res)
+        self.collection.insert_one(res)
 
     def get_chat_id(self, user_id):
         res = self.collection.find_one({"user_id": user_id})
