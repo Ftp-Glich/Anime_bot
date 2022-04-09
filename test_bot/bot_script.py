@@ -21,7 +21,8 @@ def append_to_list(el, search_list):
             return True
 
 
-# 5206087809:AAGzWSS3LQ48A9iS-lyYED_4_wSurX6l4aA - test_bot_token
+#  5206087809:AAGzWSS3LQ48A9iS-lyYED_4_wSurX6l4aA - test_bot_token
+#  1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q - main_bot_token
 
 bot = telebot.TeleBot("1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q")
 
@@ -92,6 +93,14 @@ def show_res(results, call):
     Вывести ещё результатов или вернуться к выбору жанров?", reply_markup=markup2)
 
 
+def change_platform(call):
+    buttons = [[types.InlineKeyboardButton("Да", callback_data="Change")],
+               [types.InlineKeyboardButton("Нет", callback_data="Stay")]]
+    markup = types.InlineKeyboardMarkup(buttons)
+    bot.send_message(chat_id=call.message.chat.id, text="\
+       Хотите поменять платформу?", reply_markup=markup)
+
+
 def ask_platform(call):
     buttons = [[types.InlineKeyboardButton("Телефон", callback_data="mobile")],
                [types.InlineKeyboardButton("Компьютер", callback_data="desktop")]]
@@ -109,9 +118,19 @@ def call_back(call):
         if platform == 0:
             ask_platform(call)
         else:
+            change_platform(call)
+
+    elif call.data == "mobile" or call.data == "desktop" or call.data == "Change" or call.data == "Stay":
+        if call.data == "Change" or call.data == "Stay":
+            bot.answer_callback_query(call.id)
+            if call.data == "Change":
+                if users_base.get_platform(call.from_user.id) == "mobile":
+                    users_base.set_platform(call.from_user.id, "desktop")
+                else:
+                    users_base.set_platform(call.from_user.id, "mobile")
             users_base.clear_search_list(call.from_user.id)
             keyboard = []
-            if platform == "mobile":
+            if users_base.get_platform(call.from_user.id) == "mobile":
                 for o in range(8):
                     for h in buttons_types[o]:
                         keyboard.append([h])
@@ -123,26 +142,24 @@ def call_back(call):
             temp = bot.send_message(call.message.chat.id, mes)
             users_base.set_message_id(call.from_user.id, temp.id)
             users_base.set_chat_id(call.from_user.id, call.message.chat.id)
-
-    elif call.data == "mobile" or call.data == "desktop":
-        bot.answer_callback_query(call.id)
-        users_base.add_user(call.from_user.id, call.data)
-        users_base.clear_search_list(call.from_user.id)
-        platform = call.data
-        users_base.clear_search_list(call.from_user.id)
-        keyboard = []
-        if platform == "mobile":
-            for o in range(8):
-                for h in buttons_types[o]:
-                    keyboard.append([h])
         else:
-            for o in range(8):
-                keyboard.append(buttons_types[o])
-        murkup = types.InlineKeyboardMarkup(keyboard)
-        bot.send_message(call.message.chat.id, "Выберите жанры: ", reply_markup=murkup)
-        bot.send_message(call.message.chat.id, mes)
-        users_base.set_message_id(call.from_user.id, call.message.message_id)
-        users_base.set_chat_id(call.from_user.id, call.message.chat.id)
+            bot.answer_callback_query(call.id)
+            users_base.add_user(call.from_user.id, call.data)
+            users_base.clear_search_list(call.from_user.id)
+            users_base.clear_search_list(call.from_user.id)
+            keyboard = []
+            if call.data == "mobile":
+                for o in range(8):
+                    for h in buttons_types[o]:
+                        keyboard.append([h])
+            else:
+                for o in range(8):
+                    keyboard.append(buttons_types[o])
+            murkup = types.InlineKeyboardMarkup(keyboard)
+            bot.send_message(call.message.chat.id, "Выберите жанры: ", reply_markup=murkup)
+            temp = bot.send_message(call.message.chat.id, mes)
+            users_base.set_message_id(call.from_user.id, temp.message_id)
+            users_base.set_chat_id(call.from_user.id, call.message.chat.id)
     elif call.data == "Очистить":
         bot.answer_callback_query(call.id)
         users_base.clear_search_list(call.from_user.id)
@@ -156,8 +173,7 @@ def call_back(call):
     elif call.data == "again":
         bot.answer_callback_query(call.id)
         users_base.clear_results(call.from_user.id)
-        call.data = "Давай попробуем"
-        call_back(call)
+        change_platform(call)
 
     elif call.data != "Поиск":
         bot.answer_callback_query(call.id)
