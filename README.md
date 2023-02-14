@@ -1,3 +1,3 @@
 # Anime_bot
-Наш бот - это бот по жанровому поиску аниме
+anime genre search bot
 @https://t.me/AnimeForEveryone_bot
