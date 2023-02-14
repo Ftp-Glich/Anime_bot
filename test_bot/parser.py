@@ -70,7 +70,7 @@ def get_genres(href):
     items = soup.find_all('div', class_='fi-col-item')
     for item in items:
         row_name = item.find('div', class_='sfull-t').text
-        if row_name == "Ð–Ð°Ð½Ñ€":
+        if row_name == "Жанр":
             for genre in item.find_all('a'):
                 genres.append(genre.text)
     return genres
