@@ -12,4 +12,3 @@ current_db = db_client["pylougedb"]
 collection = current_db["animes_db"]
 
 ins_result = collection.insert_many(animes_array)
-
