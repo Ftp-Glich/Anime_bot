@@ -24,7 +24,7 @@ def append_to_list(el, search_list):
 #  5206087809:AAGzWSS3LQ48A9iS-lyYED_4_wSurX6l4aA - test_bot_token
 #  1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q - main_bot_token
 
-bot = telebot.TeleBot("1995976002:AAFpCXXltTqQv0nF6fH-w-NdjK2MrpBCL6Q")
+bot = telebot.TeleBot("5825698155:AAH85V5PDiv_JjZkwuIh1Wr5wh9Yqs6i4bs")
 
 genres = [
  ["Экшен", "Боевые искусства", "Вампиры", "Война", "Гарем", "Гарем для девушек"],
@@ -138,7 +138,8 @@ def call_back(call):
                 for o in range(8):
                     keyboard.append(buttons_types[o])
             murkup = types.InlineKeyboardMarkup(keyboard)
-            bot.send_message(call.message.chat.id, "Выберите жанры: ", reply_markup=murkup)
+            bot.send_message(call.message.chat.id, "Чтобы найти аниме для себя надо нажать на кнопку с нужным жанром\
+            (выбранные жанры будут показываться в сообщении ниже), а далее нажмите кнопку поиск(рядом с сообщенимем с выбранными жанрами): ", reply_markup=murkup)
             temp = bot.send_message(call.message.chat.id, mes)
             users_base.set_message_id(call.from_user.id, temp.id)
             users_base.set_chat_id(call.from_user.id, call.message.chat.id)
@@ -156,7 +157,8 @@ def call_back(call):
                 for o in range(8):
                     keyboard.append(buttons_types[o])
             murkup = types.InlineKeyboardMarkup(keyboard)
-            bot.send_message(call.message.chat.id, "Выберите жанры: ", reply_markup=murkup)
+            bot.send_message(call.message.chat.id, "Чтобы найти аниме для себя надо нажать на кнопку с нужным жанром\
+            (выбранные жанры будут показываться в сообщении ниже), а далее нажмите кнопку поиск(рядом с сообщенимем с выбранными жанрами): ", reply_markup=murkup)
             temp = bot.send_message(call.message.chat.id, mes)
             users_base.set_message_id(call.from_user.id, temp.message_id)
             users_base.set_chat_id(call.from_user.id, call.message.chat.id)
@@ -168,7 +170,7 @@ def call_back(call):
                               message_id=users_base.get_message_id(call.from_user.id), text=mes)
     elif call.data == "more":
         bot.answer_callback_query(call.id)
-        users_base.set_results(call.from_user.id, reindex_res(users_base.get_results(call.from_user.id)))
+        users_base.set_results(call.from_user.id, users_base.get_results(call.from_user.id)[21:])
         show_res(users_base.get_results(call.from_user.id), call)
     elif call.data == "again":
         bot.answer_callback_query(call.id)
